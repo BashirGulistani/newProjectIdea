@@ -9,10 +9,6 @@ from app.websocket_manager import WebSocketManager
 
 router = APIRouter(prefix="/signals", tags=["signals"])
 
-
-
-
-
 ws_manager: WebSocketManager | None = None
 
 def set_ws_manager(m: WebSocketManager):
@@ -52,6 +48,26 @@ async def send_signal(payload: SignalCreate, db: Session = Depends(get_db), auth
         })
 
     return sig
+
+
+
+@router.get("/inbox", response_model=list[SignalOut])
+def inbox(
+    user_id: int = Query(...),
+    include_expired: bool = Query(False),
+    limit: int = Query(100, ge=1, le=500),
+    db: Session = Depends(get_db),
+    auth_user=Depends(require_api_key),
+):
+    require_user_or_403(user_id=user_id, auth_user=auth_user)
+    return list_inbox(db, user_id=user_id, include_expired=include_expired, limit=limit)
+
+
+
+
+
+
+
 
 
 
