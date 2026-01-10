@@ -9,3 +9,14 @@ from app.websocket_manager import WebSocketManager
 
 router = APIRouter(prefix="/signals", tags=["signals"])
 
+
+
+
+
+ws_manager: WebSocketManager | None = None
+
+def set_ws_manager(m: WebSocketManager):
+    global ws_manager
+    ws_manager = m
+
+
