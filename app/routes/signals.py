@@ -64,7 +64,32 @@ def inbox(
 
 
 
+@router.get("/outbox", response_model=list[SignalOut])
+def outbox(
+    user_id: int = Query(...),
+    include_expired: bool = Query(False),
+    limit: int = Query(100, ge=1, le=500),
+    db: Session = Depends(get_db),
+    auth_user=Depends(require_api_key),
+):
+    require_user_or_403(user_id=user_id, auth_user=auth_user)
+    return list_outbox(db, user_id=user_id, include_expired=include_expired, limit=limit)
 
+@router.post("/{signal_id}/seen", response_model=MarkSeenOut)
+def mark_signal_seen(
+    signal_id: int,
+    user_id: int = Query(...),
+    db: Session = Depends(get_db),
+    auth_user=Depends(require_api_key),
+):
+    require_user_or_403(user_id=user_id, auth_user=auth_user)
+    try:
+        sig = mark_seen(db, user_id=user_id, signal_id=signal_id)
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    return sig
 
 
 
