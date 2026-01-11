@@ -2,7 +2,6 @@
 
 # SilentSignal (MVP)
 **Intent without content** — send “Aware”, “Considering”, “Ready”, etc. without writing a message.
-
 This repo is a minimal MVP:
 - FastAPI backend (REST + WebSocket)
 - SQLite persistence (SQLAlchemy)
@@ -10,6 +9,10 @@ This repo is a minimal MVP:
 - Tiny web client (vanilla HTML/JS)
 - CLI tool
 
+
+
+
+@@@
 ## Features
 - Create users (each has an API key)
 - Send signals from sender -> recipient (no message body)
