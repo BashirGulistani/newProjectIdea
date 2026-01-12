@@ -18,6 +18,8 @@ def create_app() -> FastAPI:
     set_signals_ws(ws_manager)
     set_ws_ws(ws_manager)
 
+    # Serve web UI
+
     app.include_router(users_router)
     app.include_router(signals_router)
     app.include_router(ws_router)
