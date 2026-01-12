@@ -101,5 +101,24 @@ function connectWs() {
 }
 
 
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-seen]");
+  if (!btn) return;
+  const signalId = Number(btn.getAttribute("data-seen"));
+  try {
+    await api(`/signals/${signalId}/seen?user_id=${me()}`, { method: "POST" });
+    await refresh();
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+el("sendBtn").addEventListener("click", send);
+el("refreshBtn").addEventListener("click", refresh);
+el("connectBtn").addEventListener("click", connectWs);
+
+
+
+
 
 
