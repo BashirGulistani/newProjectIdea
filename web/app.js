@@ -46,3 +46,60 @@ function renderSignal(sig, { inbox } = {}) {
 
 
 
+
+async function refresh() {
+  const userId = me();
+  const inbox = await api(`/signals/inbox?user_id=${userId}&limit=100`);
+  const outbox = await api(`/signals/outbox?user_id=${userId}&limit=100`);
+
+  const inboxEl = el("inbox");
+  inboxEl.innerHTML = "";
+  inbox.forEach(sig => inboxEl.appendChild(renderSignal(sig, { inbox: true })));
+
+  const outboxEl = el("outbox");
+  outboxEl.innerHTML = "";
+  outbox.forEach(sig => outboxEl.appendChild(renderSignal(sig, { inbox: false })));
+}
+
+async function send() {
+  const payload = {
+    sender_id: me(),
+    recipient_id: Number(el("to").value),
+    kind: el("kind").value,
+    ttl_minutes: el("ttl").value ? Number(el("ttl").value) : null
+  };
+
+  try {
+    const sig = await api("/signals", { method: "POST", body: JSON.stringify(payload) });
+    el("sendResult").textContent = "sent:\n" + JSON.stringify(sig, null, 2);
+    await refresh();
+  } catch (e) {
+    el("sendResult").textContent = "error: " + e.message;
+  }
+}
+
+function connectWs() {
+  if (ws) {
+    ws.close();
+    ws = null;
+  }
+  const userId = me();
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ws?user_id=${userId}`);
+
+  ws.onopen = () => setWsStatus("connected");
+  ws.onclose = () => setWsStatus("disconnected");
+  ws.onerror = () => setWsStatus("error");
+  ws.onmessage = (evt) => {
+    try {
+      const msg = JSON.parse(evt.data);
+      if (msg.type === "signal_created") {
+        refresh();
+      }
+    } catch {}
+  };
+}
+
+
+
+
