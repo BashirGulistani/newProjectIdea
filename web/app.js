@@ -21,5 +21,28 @@ async function api(path, opts = {}) {
 }
 
 
+function setWsStatus(s) {
+  el("wsStatus").textContent = s;
+}
+
+function renderSignal(sig, { inbox } = {}) {
+  const created = new Date(sig.created_at).toLocaleString();
+  const expires = sig.expires_at ? new Date(sig.expires_at).toLocaleString() : "—";
+  const who = inbox ? `from ${sig.sender_id}` : `to ${sig.recipient_id}`;
+  const seen = sig.seen ? `seen @ ${new Date(sig.seen_at).toLocaleString()}` : "unseen";
+
+  const div = document.createElement("div");
+  div.className = "item";
+  div.innerHTML = `
+    <div class="top">
+      <span>${who}</span>
+      <span class="badge">${sig.kind}</span>
+    </div>
+    <div class="mono">created: ${created}\nexpires: ${expires}\n${seen}</div>
+    ${inbox && !sig.seen ? `<button class="secondary" data-seen="${sig.id}">Mark seen</button>` : ""}
+  `;
+  return div;
+}
+
 
 
