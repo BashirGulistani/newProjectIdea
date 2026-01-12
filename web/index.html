@@ -13,4 +13,51 @@
       <p class="sub">Send intent without content.</p>
     </header>
 
+    <section class="card">
+      <h2>Auth</h2>
+      <div class="grid">
+        <label>
+          API Key
+          <input id="apiKey" placeholder="paste X-API-Key" />
+        </label>
+        <label>
+          Your User ID
+          <input id="me" type="number" placeholder="e.g. 1" />
+        </label>
+      </div>
+      <div class="row">
+        <button id="connectBtn">Connect WebSocket</button>
+        <span id="wsStatus" class="pill">disconnected</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Send Signal</h2>
+      <div class="grid">
+        <label>
+          Recipient User ID
+          <input id="to" type="number" placeholder="e.g. 2" />
+        </label>
+        <label>
+          Kind
+          <select id="kind">
+            <option value="AWARE">AWARE</option>
+            <option value="CONSIDERING">CONSIDERING</option>
+            <option value="READY">READY</option>
+            <option value="DND">DND</option>
+            <option value="CLOSED">CLOSED</option>
+          </select>
+        </label>
+        <label>
+          TTL minutes (optional)
+          <input id="ttl" type="number" placeholder="e.g. 60" />
+        </label>
+      </div>
+      <div class="row">
+        <button id="sendBtn">Send</button>
+        <button id="refreshBtn" class="secondary">Refresh Inbox</button>
+      </div>
+      <div id="sendResult" class="mono"></div>
+    </section>
+
 
