@@ -18,7 +18,14 @@ def http(method: str, path: str, api_key: str, body=None):
     with urlopen(req) as res:
         return json.loads(res.read().decode("utf-8"))
 
-
-
+def cmd_send(args):
+    body = {
+        "sender_id": args.from_id,
+        "recipient_id": args.to_id,
+        "kind": args.kind,
+        "ttl_minutes": args.ttl_min,
+    }
+    out = http("POST", "/signals", args.api_key, body=body)
+    print(json.dumps(out, indent=2))
 
 
