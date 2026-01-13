@@ -36,5 +36,17 @@ def cmd_inbox(args):
 
 
 
+def cmd_outbox(args):
+    out = http("GET", f"/signals/outbox?user_id={args.user_id}&limit={args.limit}", args.api_key)
+    print(json.dumps(out, indent=2))
+
+def cmd_seen(args):
+    out = http("POST", f"/signals/{args.signal_id}/seen?user_id={args.user_id}", args.api_key, body={})
+    print(json.dumps(out, indent=2))
+
+
+
+
+
 
 
