@@ -29,3 +29,12 @@ def cmd_send(args):
     print(json.dumps(out, indent=2))
 
 
+
+def cmd_inbox(args):
+    out = http("GET", f"/signals/inbox?user_id={args.user_id}&limit={args.limit}", args.api_key)
+    print(json.dumps(out, indent=2))
+
+
+
+
+
