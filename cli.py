@@ -55,6 +55,13 @@ def main():
     p.add_argument("--base", default=BASE, help="API base URL (default: http://localhost:8000)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
+    ps = sub.add_parser("send", help="Send a signal")
+    ps.add_argument("--api-key", required=True)
+    ps.add_argument("--from-id", type=int, required=True)
+    ps.add_argument("--to-id", type=int, required=True)
+    ps.add_argument("--kind", required=True, choices=["AWARE","CONSIDERING","READY","DND","CLOSED"])
+    ps.add_argument("--ttl-min", type=int, default=None)
+    ps.set_defaults(fn=cmd_send)
 
 
 
