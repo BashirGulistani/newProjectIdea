@@ -50,3 +50,16 @@ def cmd_seen(args):
 
 
 
+def main():
+    p = argparse.ArgumentParser(description="SilentSignal CLI")
+    p.add_argument("--base", default=BASE, help="API base URL (default: http://localhost:8000)")
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+
+
+
+
+
+
+
+
