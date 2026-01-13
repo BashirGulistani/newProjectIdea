@@ -82,7 +82,18 @@ def main():
     pk.set_defaults(fn=cmd_seen)
 
 
+    args = p.parse_args()
+    global BASE
+    BASE = args.base
 
+    try:
+        args.fn(args)
+    except Exception as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
 
 
 
