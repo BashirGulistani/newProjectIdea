@@ -69,6 +69,18 @@ def main():
     pi.set_defaults(fn=cmd_inbox)
 
 
+    po = sub.add_parser("outbox", help="List outbox")
+    po.add_argument("--api-key", required=True)
+    po.add_argument("--user-id", type=int, required=True)
+    po.add_argument("--limit", type=int, default=50)
+    po.set_defaults(fn=cmd_outbox)
+
+    pk = sub.add_parser("seen", help="Mark signal as seen")
+    pk.add_argument("--api-key", required=True)
+    pk.add_argument("--user-id", type=int, required=True)
+    pk.add_argument("--signal-id", type=int, required=True)
+    pk.set_defaults(fn=cmd_seen)
+
 
 
 
