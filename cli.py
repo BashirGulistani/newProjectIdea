@@ -62,6 +62,13 @@ def main():
     ps.add_argument("--kind", required=True, choices=["AWARE","CONSIDERING","READY","DND","CLOSED"])
     ps.add_argument("--ttl-min", type=int, default=None)
     ps.set_defaults(fn=cmd_send)
+    pi = sub.add_parser("inbox", help="List inbox")
+    pi.add_argument("--api-key", required=True)
+    pi.add_argument("--user-id", type=int, required=True)
+    pi.add_argument("--limit", type=int, default=50)
+    pi.set_defaults(fn=cmd_inbox)
+
+
 
 
 
