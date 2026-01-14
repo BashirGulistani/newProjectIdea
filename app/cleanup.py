@@ -28,3 +28,12 @@ class CleanupService:
             self._task = asyncio.create_task(self._run())
 
 
+    async def stop(self) -> None:
+        self._stop.set()
+        if self._task:
+            await self._task
+            self._task = None
+        self._stop.clear()
+
+
+
