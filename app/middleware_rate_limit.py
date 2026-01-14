@@ -49,9 +49,26 @@ class SimpleRateLimitMiddleware(BaseHTTPMiddleware):
         if path.startswith("/web") or path in ("/", "/favicon.ico"):
             return await call_next(request)
 
+        key = self._bucket_key(request)
+        now = time.time()
+        dq = self._hits[key]
+        self._prune(dq, now)
 
+        if len(dq) >= self.config.max_requests:
+            retry_after = int(dq[0] + self.config.window_seconds - now) + 1
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "detail": "Rate limit exceeded",
+                    "max_requests": self.config.max_requests,
+                    "window_seconds": self.config.window_seconds,
+                    "retry_after_seconds": max(1, retry_after),
+                },
+                headers={"Retry-After": str(max(1, retry_after))},
+            )
 
-
+        dq.append(now)
+        return await call_next(request)
 
 
 
