@@ -37,3 +37,12 @@ class SimpleRateLimitMiddleware(BaseHTTPMiddleware):
 
 
 
+    def _prune(self, dq: Deque[float], now: float) -> None:
+        cutoff = now - self.config.window_seconds
+        while dq and dq[0] < cutoff:
+            dq.popleft()
+
+
+
+
+
