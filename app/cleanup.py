@@ -36,4 +36,17 @@ class CleanupService:
         self._stop.clear()
 
 
+    async def _run(self) -> None:
+        while not self._stop.is_set():
+            try:
+                self._delete_expired_signals()
+            except Exception:
+                pass
+            try:
+                await asyncio.wait_for(self._stop.wait(), timeout=self.interval_seconds)
+            except asyncio.TimeoutError:
+                continue
+
+
+
 
