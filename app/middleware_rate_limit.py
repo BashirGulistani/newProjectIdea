@@ -15,3 +15,18 @@ class RateLimitConfig:
     window_seconds: int = 60
 
 
+class SimpleRateLimitMiddleware(BaseHTTPMiddleware):
+    """
+    MVP-grade rate limiter:
+    - Buckets by API key if present, else by client IP
+    - Fixed window with rolling deque (good enough for MVP)
+    - In-memory only (restart clears)
+    """
+
+    def __init__(self, app, config: RateLimitConfig | None = None):
+        super().__init__(app)
+        self.config = config or RateLimitConfig()
+        self._hits: Dict[str, Deque[float]] = defaultdict(deque)
+
+
+
