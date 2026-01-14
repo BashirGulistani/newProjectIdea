@@ -44,5 +44,16 @@ class SimpleRateLimitMiddleware(BaseHTTPMiddleware):
 
 
 
+    async def dispatch(self, request: Request, call_next):
+        path = request.url.path
+        if path.startswith("/web") or path in ("/", "/favicon.ico"):
+            return await call_next(request)
+
+
+
+
+
+
+
 
 
