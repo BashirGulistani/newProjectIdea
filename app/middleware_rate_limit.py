@@ -28,5 +28,12 @@ class SimpleRateLimitMiddleware(BaseHTTPMiddleware):
         self.config = config or RateLimitConfig()
         self._hits: Dict[str, Deque[float]] = defaultdict(deque)
 
+    def _bucket_key(self, request: Request) -> str:
+        api_key = request.headers.get("x-api-key")
+        if api_key:
+            return f"k:{api_key}"
+        ip = request.client.host if request.client else "unknown"
+        return f"ip:{ip}"
+
 
 
