@@ -47,6 +47,14 @@ class CleanupService:
             except asyncio.TimeoutError:
                 continue
 
-
+    def _delete_expired_signals(self) -> None:
+        db: Session = SessionLocal()
+        try:
+            now = datetime.now(timezone.utc)
+            stmt = delete(Signal).where(Signal.expires_at.is_not(None), Signal.expires_at <= now)
+            db.execute(stmt)
+            db.commit()
+        finally:
+            db.close()
 
 
