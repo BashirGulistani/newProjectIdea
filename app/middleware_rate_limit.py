@@ -9,3 +9,9 @@ from starlette.responses import JSONResponse
 
 
 
+@dataclass
+class RateLimitConfig:
+    max_requests: int = 120
+    window_seconds: int = 60
+
+
