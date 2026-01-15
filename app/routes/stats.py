@@ -11,5 +11,14 @@ router = APIRouter(prefix="/stats", tags=["stats"])
 
 
 
+@router.get("/inbox")
+def inbox_stats(
+    user_id: int = Query(...),
+    days: int = Query(7, ge=1, le=90),
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+
+
 
 
