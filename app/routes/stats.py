@@ -45,5 +45,40 @@ def inbox_stats(
     )
 
 
+    by_kind_rows = (
+        db.query(Signal.kind, func.count(Signal.id))
+        .filter(Signal.recipient_id == user_id, Signal.created_at >= since)
+        .group_by(Signal.kind)
+        .all()
+    )
+
+    by_kind = {str(k): int(c) for (k, c) in by_kind_rows}
+
+    # Ensure all kinds exist in response (nice for dashboards)
+    for k in SignalKind:
+        by_kind.setdefault(k.value, 0)
+
+    return {
+        "user_id": user_id,
+        "window_days": days,
+        "total_received": int(total),
+        "unseen": int(unseen),
+        "by_kind": by_kind,
+    }
+
+
+@router.get("/outbox")
+def outbox_stats(
+    user_id: int = Query(...),
+    days: int = Query(7, ge=1, le=90),
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+    """
+    Outbox analytics:
+    - total sent (last N days)
+    - breakdown by kind
+    - top recipients
+    """
 
 
