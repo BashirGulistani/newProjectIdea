@@ -37,6 +37,13 @@ def inbox_stats(
     )
 
 
+    unseen = (
+        db.query(func.count(Signal.id))
+        .filter(Signal.recipient_id == user_id, Signal.created_at >= since, Signal.seen == False)  # noqa: E712
+        .scalar()
+        or 0
+    )
+
 
 
 
