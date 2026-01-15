@@ -104,4 +104,21 @@ def outbox_stats(
     for k in SignalKind:
         by_kind.setdefault(k.value, 0)
 
+    top_recipients_rows = (
+        db.query(Signal.recipient_id, func.count(Signal.id).label("cnt"))
+        .filter(Signal.sender_id == user_id, Signal.created_at >= since)
+        .group_by(Signal.recipient_id)
+        .order_by(func.count(Signal.id).desc())
+        .limit(5)
+        .all()
+    )
+    top_recipients = [{"recipient_id": int(rid), "count": int(cnt)} for (rid, cnt) in top_recipients_rows]
+
+    return {
+        "user_id": user_id,
+        "window_days": days,
+        "total_sent": int(total),
+        "by_kind": by_kind,
+        "top_recipients": top_recipients,
+    }
 
