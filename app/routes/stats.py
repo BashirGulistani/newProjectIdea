@@ -18,6 +18,24 @@ def inbox_stats(
     db: Session = Depends(get_db),
     auth_user: User = Depends(require_api_key),
 ):
+    """
+    Simple analytics:
+    - total received (last N days)
+    - unseen count
+    - breakdown by kind
+    """
+    require_user_or_403(user_id=user_id, auth_user=auth_user)
+
+    now = datetime.now(timezone.utc)
+    since = now - timedelta(days=days)
+
+    total = (
+        db.query(func.count(Signal.id))
+        .filter(Signal.recipient_id == user_id, Signal.created_at >= since)
+        .scalar()
+        or 0
+    )
+
 
 
 
