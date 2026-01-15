@@ -82,3 +82,26 @@ def outbox_stats(
     """
 
 
+    require_user_or_403(user_id=user_id, auth_user=auth_user)
+
+    now = datetime.now(timezone.utc)
+    since = now - timedelta(days=days)
+
+    total = (
+        db.query(func.count(Signal.id))
+        .filter(Signal.sender_id == user_id, Signal.created_at >= since)
+        .scalar()
+        or 0
+    )
+
+    by_kind_rows = (
+        db.query(Signal.kind, func.count(Signal.id))
+        .filter(Signal.sender_id == user_id, Signal.created_at >= since)
+        .group_by(Signal.kind)
+        .all()
+    )
+    by_kind = {str(k): int(c) for (k, c) in by_kind_rows}
+    for k in SignalKind:
+        by_kind.setdefault(k.value, 0)
+
+
