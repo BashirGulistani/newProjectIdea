@@ -155,5 +155,15 @@ def add_member(
     return m
 
 
+@router.get("/{org_id}/teams", response_model=list[TeamOut])
+def list_teams(
+    org_id: int,
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+    require_org_role(db, auth_user.id, org_id, min_role=Role.VIEWER)
+    return db.query(Team).filter(Team.org_id == org_id).order_by(Team.id.asc()).all()
+
+
 
 
