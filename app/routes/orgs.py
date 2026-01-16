@@ -165,5 +165,16 @@ def list_teams(
     return db.query(Team).filter(Team.org_id == org_id).order_by(Team.id.asc()).all()
 
 
-
+@router.get("/{org_id}/members", response_model=list[MembershipOut])
+def list_members(
+    org_id: int,
+    team_id: int | None = Query(default=None),
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+    require_org_role(db, auth_user.id, org_id, min_role=Role.VIEWER)
+    q = db.query(Membership).filter(Membership.org_id == org_id, Membership.is_active == True) 
+    if team_id is not None:
+        q = q.filter(Membership.team_id == team_id)
+    return q.order_by(Membership.id.asc()).all()
 
