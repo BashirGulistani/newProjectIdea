@@ -97,6 +97,37 @@ def add_member(
 
 
 
+    team_id = payload.team_id
+    if team_id is not None:
+        team = db.query(Team).filter(Team.id == team_id, Team.org_id == org_id).first()
+        if not team:
+            raise HTTPException(status_code=400, detail="Team not found in org")
+
+    existing = (
+        db.query(Membership)
+        .filter(Membership.org_id == org_id, Membership.user_id == payload.user_id, Membership.team_id == team_id)
+        .first()
+    )
+    if existing:
+        existing.role = payload.role
+        existing.is_active = True
+        db.commit()
+        db.refresh(existing)
+
+        write_audit(
+            db,
+            event_type="member.updated",
+            actor_user_id=auth_user.id,
+            org_id=org_id,
+            team_id=team_id,
+            target_type="membership",
+            target_id=existing.id,
+            ip=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            payload={"user_id": payload.user_id, "role": payload.role.value, "team_id": team_id},
+        )
+        return existing
+
 
 
 
