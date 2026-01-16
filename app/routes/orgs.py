@@ -129,5 +129,31 @@ def add_member(
         return existing
 
 
+    m = Membership(
+        user_id=payload.user_id,
+        org_id=org_id,
+        team_id=team_id,
+        role=payload.role,
+        is_active=True,
+    )
+    db.add(m)
+    db.commit()
+    db.refresh(m)
+
+    write_audit(
+        db,
+        event_type="member.added",
+        actor_user_id=auth_user.id,
+        org_id=org_id,
+        team_id=team_id,
+        target_type="membership",
+        target_id=m.id,
+        ip=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        payload={"user_id": payload.user_id, "role": payload.role.value, "team_id": team_id},
+    )
+    return m
+
+
 
 
