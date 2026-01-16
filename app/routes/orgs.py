@@ -61,6 +61,26 @@ def create_team(
     if not org:
         raise HTTPException(status_code=404, detail="Org not found")
 
+    team = Team(org_id=org_id, name=payload.name.strip())
+    db.add(team)
+    db.commit()
+    db.refresh(team)
+
+    write_audit(
+        db,
+        event_type="team.created",
+        actor_user_id=auth_user.id,
+        org_id=org_id,
+        team_id=team.id,
+        target_type="team",
+        target_id=team.id,
+        ip=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        payload={"name": team.name},
+    )
+    return team
+
+
 
 
 
