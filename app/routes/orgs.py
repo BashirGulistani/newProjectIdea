@@ -10,6 +10,18 @@ from app.audit import write_audit
 router = APIRouter(prefix="/orgs", tags=["orgs"])
 
 
+@router.post("", response_model=OrgOut)
+def create_org(
+    payload: OrgCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+    org = Organization(name=payload.name.strip())
+    db.add(org)
+    db.commit()
+    db.refresh(org)
+
 
 
 
