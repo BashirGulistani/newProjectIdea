@@ -47,6 +47,20 @@ def create_org(
 
 
 
+@router.post("/{org_id}/teams", response_model=TeamOut)
+def create_team(
+    org_id: int,
+    payload: TeamCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+    require_org_role(db, auth_user.id, org_id, min_role=Role.ADMIN)
+
+    org = db.query(Organization).filter(Organization.id == org_id).first()
+    if not org:
+        raise HTTPException(status_code=404, detail="Org not found")
+
 
 
 
