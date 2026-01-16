@@ -80,6 +80,21 @@ def create_team(
     )
     return team
 
+@router.post("/{org_id}/members", response_model=MembershipOut)
+def add_member(
+    org_id: int,
+    payload: MembershipCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    auth_user: User = Depends(require_api_key),
+):
+    require_org_role(db, auth_user.id, org_id, min_role=Role.ADMIN)
+
+
+    u = db.query(User).filter(User.id == payload.user_id).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="User not found")
+
 
 
 
