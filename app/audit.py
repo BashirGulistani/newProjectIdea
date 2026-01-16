@@ -17,3 +17,21 @@ def write_audit(
     payload: Dict[str, Any] | None = None,
 ) -> AuditEvent:
 
+    """
+    Append-only audit event. Never update or delete these in code.
+    """
+    evt = AuditEvent(
+        event_type=event_type,
+        actor_user_id=actor_user_id,
+        org_id=org_id,
+        team_id=team_id,
+        target_type=target_type,
+        target_id=target_id,
+        ip=ip,
+        user_agent=user_agent,
+        payload_json=json.dumps(payload or {}, ensure_ascii=False),
+    )
+    db.add(evt)
+    db.commit()
+    db.refresh(evt)
+    return evt
