@@ -22,6 +22,29 @@ def create_org(
     db.commit()
     db.refresh(org)
 
+    m = Membership(
+        user_id=auth_user.id,
+        org_id=org.id,
+        team_id=None,
+        role=Role.OWNER,
+        is_active=True,
+    )
+    db.add(m)
+    db.commit()
+
+    write_audit(
+        db,
+        event_type="org.created",
+        actor_user_id=auth_user.id,
+        org_id=org.id,
+        target_type="org",
+        target_id=org.id,
+        ip=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        payload={"name": org.name},
+    )
+    return org
+
 
 
 
