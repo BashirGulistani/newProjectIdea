@@ -87,6 +87,16 @@ class Membership(Base):
 
 
 
+class AuditEvent(Base):
+    __tablename__ = "audit_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True, nullable=False)
+
+    event_type: Mapped[str] = mapped_column(String(64), index=True, nullable=False)
+
+
+
 
 
 
