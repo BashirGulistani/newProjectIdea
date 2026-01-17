@@ -46,5 +46,23 @@ class Signal(Base):
     sender = relationship("User", foreign_keys=[sender_id], back_populates="sent_signals")
     recipient = relationship("User", foreign_keys=[recipient_id], back_populates="received_signals")
 
+
+
+
+class Role(str, enum.Enum):
+    OWNER = "OWNER"
+    ADMIN = "ADMIN"
+    MEMBER = "MEMBER"
+    VIEWER = "VIEWER"
+
+
+
+
+
+
+
+
+
+
 Index("idx_signals_recipient_created", Signal.recipient_id, Signal.created_at)
 Index("idx_signals_sender_created", Signal.sender_id, Signal.created_at)
