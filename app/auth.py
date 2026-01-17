@@ -50,3 +50,12 @@ def require_org_role(db: Session, user_id: int, org_id: int, min_role: Role = Ro
     return m
 
 
+def require_team_member(db: Session, user_id: int, org_id: int, team_id: int) -> Membership:
+    m = (
+        db.query(Membership)
+        .filter(Membership.user_id == user_id, Membership.org_id == org_id, Membership.team_id == team_id, Membership.is_active == True)  # noqa: E712
+        .first()
+    )
+    if not m:
+        raise HTTPException(status_code=403, detail="Forbidden: not a team member")
+    return m
