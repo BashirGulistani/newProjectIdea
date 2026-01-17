@@ -40,3 +40,20 @@ class MarkSeenOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+
+
+
+from app.models import Role
+
+class OrgCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+
+
+
+
+
+
+
