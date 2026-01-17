@@ -53,6 +53,15 @@ class OrgCreate(BaseModel):
 
 
 
+class OrgOut(BaseModel):
+    id: int
+    name: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class TeamCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
 
 
 
