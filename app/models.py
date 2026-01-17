@@ -64,6 +64,29 @@ class Organization(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
 
+class Team(Base):
+    __tablename__ = "teams"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    org_id: Mapped[int] = mapped_column(ForeignKey("orgs.id"), index=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+class Membership(Base):
+    __tablename__ = "memberships"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    org_id: Mapped[int] = mapped_column(ForeignKey("orgs.id"), index=True, nullable=False)
+    team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"), index=True, nullable=True)
+
+    role: Mapped[Role] = mapped_column(Enum(Role), index=True, nullable=False, default=Role.MEMBER)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+
+
 
 
 
