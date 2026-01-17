@@ -36,3 +36,17 @@ _ROLE_RANK = {
 }
 
 
+def require_org_role(db: Session, user_id: int, org_id: int, min_role: Role = Role.MEMBER) -> Membership:
+    m = (
+        db.query(Membership)
+        .filter(Membership.user_id == user_id, Membership.org_id == org_id, Membership.team_id.is_(None), Membership.is_active == True)  # noqa: E712
+        .first()
+    )
+    if not m:
+        raise HTTPException(status_code=403, detail="Forbidden: not an org member")
+
+    if _ROLE_RANK[m.role] < _ROLE_RANK[min_role]:
+        raise HTTPException(status_code=403, detail=f"Forbidden: requires {min_role.value}+")
+    return m
+
+
