@@ -65,4 +65,17 @@ class TeamCreate(BaseModel):
 
 
 
+class TeamOut(BaseModel):
+    id: int
+    org_id: int
+    name: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+class MembershipCreate(BaseModel):
+    user_id: int
+    team_id: int | None = None
+    role: Role = Role.MEMBER
+
 
