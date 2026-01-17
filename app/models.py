@@ -95,6 +95,17 @@ class AuditEvent(Base):
 
     event_type: Mapped[str] = mapped_column(String(64), index=True, nullable=False)
 
+    actor_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True, nullable=True)
+    org_id: Mapped[int | None] = mapped_column(ForeignKey("orgs.id"), index=True, nullable=True)
+    team_id: Mapped[int | None] = mapped_column(ForeignKey("teams.id"), index=True, nullable=True)
+
+    target_type: Mapped[str | None] = mapped_column(String(40), index=True, nullable=True)
+    target_id: Mapped[int | None] = mapped_column(Integer, index=True, nullable=True)
+
+    ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    user_agent: Mapped[str | None] = mapped_column(String(240), nullable=True)
+
+    payload_json: Mapped[str] = mapped_column(String, nullable=False, default="{}")
 
 
 
