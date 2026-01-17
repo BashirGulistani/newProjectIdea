@@ -79,3 +79,16 @@ class MembershipCreate(BaseModel):
     role: Role = Role.MEMBER
 
 
+
+class MembershipOut(BaseModel):
+    id: int
+    user_id: int
+    org_id: int
+    team_id: int | None
+    role: Role
+    is_active: bool
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+
